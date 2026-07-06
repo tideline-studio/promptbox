@@ -26,8 +26,16 @@ const LeftNaviBarForEditor = ({
   promptLists: Array<PromptList>
 }) => {
   const [showSearchBox, setShowSearchBox] = useState(false)
+  const [pendingRenameListId, setPendingRenameListId] =
+    useState<number>()
   const { data, trigger: createPromptList } =
     usePromptListCreation()
+
+  useEffect(() => {
+    if (data?.id !== undefined) {
+      setPendingRenameListId(data.id)
+    }
+  }, [data])
   const handleItemClick = (
     item: 'search' | 'preview' | 'add'
   ) => {
@@ -72,7 +80,10 @@ const LeftNaviBarForEditor = ({
             activeListId={activeListId}
             setActiveListId={setActiveListId}
             forceRenameModal={
-              !!data && data.id === promptList.id
+              pendingRenameListId === promptList.id
+            }
+            onInitialRenameComplete={() =>
+              setPendingRenameListId(undefined)
             }
           />
         ))}
@@ -108,11 +119,13 @@ export const PromptList = ({
   activeListId,
   setActiveListId,
   forceRenameModal = false,
+  onInitialRenameComplete,
 }: {
   promptList: PromptList
   activeListId: number | undefined
   setActiveListId: (value: number) => void
   forceRenameModal?: boolean
+  onInitialRenameComplete?: () => void
 }) => {
   const [showOptionBar, setShowOptionBar] = useState(false)
   const [showDeleteModal, setShowDeleteModal] =
@@ -163,6 +176,11 @@ export const PromptList = ({
             className='w-80%'
             promptList={promptList}
             setShowRenameModal={setShowRenameModal}
+            onSaveComplete={
+              forceRenameModal
+                ? onInitialRenameComplete
+                : undefined
+            }
           />
         ) : (
           <div className='truncate break-words'>
@@ -268,10 +286,12 @@ const PromptListDeleteModal = ({
 const PromptListRenameModal = ({
   promptList,
   setShowRenameModal,
+  onSaveComplete,
 }: {
   className?: string
   promptList: PromptList
   setShowRenameModal: (value: boolean) => void
+  onSaveComplete?: () => void
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { trigger: updatePromptList } =
@@ -297,6 +317,7 @@ const PromptListRenameModal = ({
       id: promptList.id,
       name: inputValue,
     })
+    onSaveComplete?.()
   }
 
   const handleChange = (value: string) => {

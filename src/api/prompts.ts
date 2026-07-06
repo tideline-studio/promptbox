@@ -18,7 +18,7 @@ export const updatePromptList = async ({
   id,
   name,
 }: PromptListUpdate): Promise<void> => {
-  database.promptLists.update(id, {
+  await database.promptLists.update(id, {
     name,
   })
 }
@@ -46,7 +46,7 @@ export const updatePrompt = async ({
   index,
   text,
 }: PromptUpdate): Promise<void> => {
-  database.prompts.update(id, {
+  await database.prompts.update(id, {
     text,
     index,
   })

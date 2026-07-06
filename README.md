@@ -3,7 +3,7 @@
 From Git commands and AI prompts to anything you reuse  
 **_Organized, searchable, and one click to copy_**
 
-👉 [Try it Now](https://promptbox.vercel.app/)
+👉 [Try it Now](https://promptbox-ten.vercel.app/)
 
 ## Development
 
@@ -42,7 +42,7 @@ Once pre-commit is configured, it will automatically run `Prettier` and `ESLint`
 
 #### Workflows
 
-This repo employs GitHub Actions that automatically execute upon opening a new pull request and with every subsequent commit to that pull request. These actions include formatting, linting, building, and, post-merge, deploying your changes to [Vercel](https://promptbox.vercel.app). For a successful merge, all actions must pass, and your pull request requires approval. Once merged, the actions rerun on the main branch.
+This repo employs GitHub Actions that automatically execute upon opening a new pull request and with every subsequent commit to that pull request. These actions include formatting, linting, building, and, post-merge, deploying your changes to [Vercel](https://promptbox-ten.vercel.app/). For a successful merge, all actions must pass, and your pull request requires approval. Once merged, the actions rerun on the main branch.
 
 #### Vercel deployment
 

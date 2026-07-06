@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "setup": "bash scripts/setup.sh",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "jest",
     "test:visual": "npx playwright test",
     "test:visual:update": "npx playwright test --update-snapshots"
@@ -45,6 +48,7 @@
     "@playwright/test": "^1.58.2",
     "eslint-config-next": "^13.4.19",
     "eslint-plugin-unused-imports": "^3.0.0",
+    "prettier": "3.0.0-alpha.6",
     "fake-indexeddb": "^4.0.1",
     "vercel": "^30.2.2"
   }

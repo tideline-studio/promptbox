@@ -28,9 +28,9 @@ const SearchBox = ({
     >
       <div className='p-6 flex flex-col h-full'>
         <input
-          className='border-b-3 border-gray-300 bg-white 
-                         h-10 w-full mb-3 flex-none
-                         text-md focus:outline-none focus:border-black'
+          className='border-b-3 border-gray-300 bg-white
+            h-10 w-full mb-3 flex-none
+            text-md focus:outline-none focus:border-black'
           autoFocus
           type='text'
           name='search'
@@ -48,14 +48,14 @@ const SearchBox = ({
               .map(item => (
                 <div
                   key={item.id}
-                  className='hover:bg-gray-100 cursor-pointer grid items-center
-                      justify-between grid-cols-[1fr_min-content]
-                      [&>*:last-child]:hidden [&>*:last-child]:hover:block p-2'
+                  className='hover:bg-gray-100 cursor-pointer grid
+                    items-center justify-between
+                    grid-cols-[1fr_min-content]
+                    [&>*:last-child]:hidden
+                    [&>*:last-child]:hover:block p-2'
                   onClick={() => handleItemClick(item.id)}
                 >
-                  <li className='flex-grow'>
-                    {item.name}
-                  </li>
+                  <li className='flex-grow'>{item.name}</li>
                   <div>
                     <i className='fas fa-camera-retro pi pi-arrow-right' />
                   </div>

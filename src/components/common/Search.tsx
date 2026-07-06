@@ -46,21 +46,20 @@ const SearchBox = ({
                   .includes(searchTerm.toLowerCase())
               )
               .map(item => (
-                <>
-                  <div
-                    className='hover:bg-gray-100 cursor-pointer grid items-center
+                <div
+                  key={item.id}
+                  className='hover:bg-gray-100 cursor-pointer grid items-center
                       justify-between grid-cols-[1fr_min-content]
                       [&>*:last-child]:hidden [&>*:last-child]:hover:block p-2'
-                    onClick={() => handleItemClick(item.id)}
-                  >
-                    <li key={item.id} className='flex-grow'>
-                      {item.name}
-                    </li>
-                    <div>
-                      <i className='fas fa-camera-retro pi pi-arrow-right' />
-                    </div>
+                  onClick={() => handleItemClick(item.id)}
+                >
+                  <li className='flex-grow'>
+                    {item.name}
+                  </li>
+                  <div>
+                    <i className='fas fa-camera-retro pi pi-arrow-right' />
                   </div>
-                </>
+                </div>
               ))}
           </ul>
         </div>

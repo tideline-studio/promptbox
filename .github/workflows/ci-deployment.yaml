@@ -1,21 +1,24 @@
 name: ci-deployment
-run-name: Running validation for ${{ github.actor }}
+run-name: Deploying for ${{ github.actor }}
 on:
-  push:
-    branches:
-      - main
   workflow_run:
     workflows: ['ci-validation']
     types:
       - completed
+    branches:
+      - main
 jobs:
   run-build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
       - run: yarn
-      - run: yarn vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - run: yarn vercel deploy --prod --yes --token=$VERCEL_TOKEN

@@ -12,4 +12,6 @@ repos:
         additional_dependencies:
           - eslint@8.39.0
           - eslint-plugin-react@6.10.3
-          - eslint-config-next@13.4.1
+          - eslint-plugin-react-hooks@4.6.0
+          - eslint-config-next@13.4.19
+          - eslint-plugin-unused-imports@3.0.0

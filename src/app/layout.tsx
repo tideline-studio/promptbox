@@ -27,9 +27,7 @@ export default function RootLayout({
       <ChakraProvider theme={theme}>
         <body className={`h-screen ${spectral.className}`}>
           <MainNavigationBar />
-          <main className='h-rest'>
-            {children}
-          </main>
+          <main className='h-rest'>{children}</main>
         </body>
       </ChakraProvider>
     </html>

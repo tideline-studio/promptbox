@@ -3,13 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "setup": "bash scripts/setup.sh",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "jest",
-    "test:visual": "npx playwright test",
-    "test:visual:update": "npx playwright test --update-snapshots"
+    "test:e2e": "bash scripts/test-e2e.sh",
+    "test:e2e:dev": "PW_DEV=1 bash scripts/test-e2e.sh",
+    "test:e2e:ui": "bash scripts/test-e2e.sh --ui",
+    "test:e2e:debug": "bash scripts/test-e2e.sh --debug",
+    "test:e2e:codegen": "playwright codegen http://localhost:3000",
+    "test:e2e:report": "playwright show-report",
+    "playwright:install": "playwright install chromium",
+    "test:visual": "bash scripts/test-e2e.sh",
+    "test:visual:update": "bash scripts/test-e2e.sh --update-snapshots"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
@@ -45,6 +55,7 @@
     "@playwright/test": "^1.58.2",
     "eslint-config-next": "^13.4.19",
     "eslint-plugin-unused-imports": "^3.0.0",
+    "prettier": "3.0.0-alpha.6",
     "fake-indexeddb": "^4.0.1",
     "vercel": "^30.2.2"
   }

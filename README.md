@@ -1,59 +1,111 @@
-## Promptbox
+# Promptbox
 
-From Git commands and AI prompts to anything you reuse  
-**_Organized, searchable, and one click to copy_**
+Save reusable texts in lists — prompts, commands, etc. Find fast, copy in one click.
 
-👉 [Try it Now](https://promptbox-ten.vercel.app/)
+[https://promptbox-ten.vercel.app](https://promptbox-ten.vercel.app/)
+
+Create a list → add your text → click to copy.
+
+## Tech stack
+
+| Layer         | Tools                                                                                                                                                                   |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework     | [Next.js 14](https://nextjs.org/) (App Router), [React 18](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)                                           |
+| Storage       | [Dexie](https://dexie.org/) on [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)                                                              |
+| Data fetching | [SWR](https://swr.vercel.app/)                                                                                                                                          |
+| UI            | [Chakra UI](https://chakra-ui.com/), [PrimeReact](https://primereact.org/) / [PrimeIcons](https://primefaces.org/primeicons/), [Tailwind CSS](https://tailwindcss.com/) |
+| Testing       | [Jest](https://jestjs.io/), [Playwright](https://playwright.dev/) (visual/e2e, optional)                                                                                |
+| Tooling       | [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [pre-commit](https://pre-commit.com/)                                                                  |
 
 ## Development
 
-#### Project Setup
+### Prerequisites
 
-Ensure the following are installed on your device before proceeding:
+- **Node.js** 18.17+ ([`.nvmrc`](.nvmrc) pins 18.17.0 — run `nvm use` if you use nvm)
+- **Yarn**
+- **Python 3.10+** (for pre-commit hooks in CI and locally)
 
-- Node.js (version 18.17 or higher)
-- Yarn (as the package manager)
-
-#### Running the Project
-
-- Framework and Tools: This repo is developed using `Next.js` and `React`, with `IndexedDB` for local persistent data storage, and `Jest` for testing.
-
-- Install Dependencies: Start by installing all required dependencies. Run `yarn install`.
-
-- Start Development Server: To launch the local development server, run `yarn dev`. The application will be accessible at localhost:3000 in your web browser.
-
-- Run Tests: For executing the test suite, use `yarn test`.
-
-#### Formatting and linting
-
-Before contributing to this repo, setting up `pre-commit` is required. Follow the installation instructions available at [pre-commit.com](https://pre-commit.com/). In the root directory of this repo, run the following command to install the pre-commit hook:
+### Setup
 
 ```bash
-$ pre-commit install
+yarn setup
 ```
 
-Upon successful installation, you should see an output similar to:
+This installs JS dependencies, pre-commit, and git hooks so formatting/lint runs on every commit.
+
+### Scripts
+
+| Command                   | Description                                                        |
+| ------------------------- | ------------------------------------------------------------------ |
+| `yarn dev`                | Start dev server at [http://localhost:3000](http://localhost:3000) |
+| `yarn build`              | Production build                                                   |
+| `yarn start`              | Serve production build                                             |
+| `yarn lint`               | Run ESLint (with `--fix`)                                          |
+| `yarn format`             | Auto-fix formatting with Prettier                                  |
+| `yarn format:check`       | Verify formatting (same check CI runs)                             |
+| `yarn test`               | Run Jest unit tests                                                |
+| `yarn test:visual`        | Run Playwright tests (requires dev server)                         |
+| `yarn test:visual:update` | Update Playwright snapshots                                        |
+
+### Pre-commit hooks
+
+`yarn setup` handles this. If you only need to reinstall hooks:
 
 ```bash
-pre-commit installed at .git/hooks/pre-commit
+pip install -r config/requirements.txt
+pre-commit install
 ```
 
-Once pre-commit is configured, it will automatically run `Prettier` and `ESLint` checks during each commit. If errors are found, you'll need to address and correct them before your changes can be successfully committed.
+On each `git commit`, **Prettier** and **ESLint** run automatically. If Prettier reformats files, stage the changes and commit again.
 
-#### Workflows
+You can also run checks manually:
 
-This repo employs GitHub Actions that automatically execute upon opening a new pull request and with every subsequent commit to that pull request. These actions include formatting, linting, building, and, post-merge, deploying your changes to [Vercel](https://promptbox-ten.vercel.app/). For a successful merge, all actions must pass, and your pull request requires approval. Once merged, the actions rerun on the main branch.
+```bash
+yarn format
+yarn format:check
+yarn lint
+pre-commit run --all-files
+```
 
-#### Vercel deployment
+### Project structure
 
-The `ci-deployment` workflow deploys to Vercel using these GitHub secrets:
+```
+src/
+├── api/           # Dexie database + prompt/list CRUD
+├── app/           # Next.js App Router pages and layout
+├── components/    # UI (editor, navigation, shared primitives)
+├── contexts/      # React context (active list)
+├── hooks/         # SWR data hooks + utilities
+├── types/         # TypeScript interfaces
+└── __tests__/     # Jest unit tests
+```
+
+## CI/CD
+
+Two GitHub Actions workflows run on pushes and pull requests to `main`:
+
+1. **`ci-validation`** — pre-commit checks, Jest unit tests, production build
+2. **`ci-deployment`** — deploys to Vercel after `ci-validation` succeeds on `main`
+
+Pull requests require passing CI and approval before merge.
+
+### Vercel deployment
+
+The `ci-deployment` workflow uses these GitHub secrets:
 
 - `VERCEL_ORG_ID`
 - `VERCEL_PROJECT_ID`
 - `VERCEL_TOKEN`
 
-Create a new Vercel project named `promptbox` and add these secrets to your GitHub repository before the first deploy.
+Create a Vercel project named `promptbox` and add these secrets before the first deploy.
 
-## Contact
+## Contributing
 
-© Tideline Studio, since 2026
+1. Fork and branch from `main`
+2. Run `yarn setup`
+3. Open a pull request — use the [PR template](pull_request_template.md)
+4. Ensure CI passes
+
+## License
+
+MIT © Tideline Studio, 2026

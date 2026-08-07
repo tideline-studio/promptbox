@@ -1,10 +1,10 @@
 # Promptbox
 
-Save reusable texts in lists — prompts, commands, etc. Find fast, copy in one click.
+Save reusable texts in lists: prompts, commands, and more. Find them fast, copy in one click.
 
-[https://promptbox-ten.vercel.app](https://promptbox-ten.vercel.app/)
+[Try it now](https://promptbox-ten.vercel.app/)
 
-Create a list → add your text → click to copy.
+Create a list, add your text, then click to copy.
 
 ## Tech stack
 
@@ -21,9 +21,9 @@ Create a list → add your text → click to copy.
 
 ### Prerequisites
 
-- **Node.js** 18.17+ ([`.nvmrc`](.nvmrc) pins 18.17.0 — run `nvm use` if you use nvm)
+- **Node.js** 18.17+ ([`.nvmrc`](.nvmrc) pins 18.17.0; run `nvm use` if you use nvm)
 - **Yarn**
-- **Python 3.10+** (for pre-commit hooks in CI and locally)
+- **Python 3.10+** (for pre-commit hooks locally and in CI)
 
 ### Setup
 
@@ -31,7 +31,7 @@ Create a list → add your text → click to copy.
 yarn setup
 ```
 
-This installs JS dependencies, pre-commit, and git hooks so formatting/lint runs on every commit.
+This installs JS dependencies, pre-commit, and git hooks so formatting and lint run on every commit.
 
 ### Scripts
 
@@ -49,14 +49,14 @@ This installs JS dependencies, pre-commit, and git hooks so formatting/lint runs
 
 ### Pre-commit hooks
 
-`yarn setup` handles this. If you only need to reinstall hooks:
+`yarn setup` handles this. To reinstall hooks only:
 
 ```bash
 pip install -r config/requirements.txt
 pre-commit install
 ```
 
-On each `git commit`, **Prettier** and **ESLint** run automatically. If Prettier reformats files, stage the changes and commit again.
+On each `git commit`, Prettier and ESLint run automatically. If Prettier reformats files, stage the changes and commit again.
 
 You can also run checks manually:
 
@@ -84,8 +84,8 @@ src/
 
 Two GitHub Actions workflows run on pushes and pull requests to `main`:
 
-1. **`ci-validation`** — pre-commit checks, Jest unit tests, production build
-2. **`ci-deployment`** — deploys to Vercel after `ci-validation` succeeds on `main`
+1. **`ci-validation`**: pre-commit checks, Jest unit tests, production build
+2. **`ci-deployment`**: deploys to Vercel after `ci-validation` succeeds on `main`
 
 Pull requests require passing CI and approval before merge.
 
@@ -97,15 +97,15 @@ The `ci-deployment` workflow uses these GitHub secrets:
 - `VERCEL_PROJECT_ID`
 - `VERCEL_TOKEN`
 
-Create a Vercel project named `promptbox` and add these secrets before the first deploy.
+Create a Vercel project named `promptbox` and add these secrets to the GitHub repository before the first deploy.
 
 ## Contributing
 
 1. Fork and branch from `main`
 2. Run `yarn setup`
-3. Open a pull request — use the [PR template](pull_request_template.md)
+3. Open a pull request using the [PR template](pull_request_template.md)
 4. Ensure CI passes
 
 ## License
 
-MIT © Tideline Studio, 2026
+MIT © Slime Studio, 2026

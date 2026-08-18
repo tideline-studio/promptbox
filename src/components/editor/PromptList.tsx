@@ -74,7 +74,7 @@ const PromptTable = ({
 
   return (
     <>
-      <div className='flex flex-col pr-20 mb-3 pl-8 h-full box-border'>
+      <div className='flex flex-col pr-20 mb-3 pl-8 h-full min-h-0 box-border'>
         {dialogueState.state === 'update' ? (
           <PromptEditorDialogue
             activePrompt={dialogueState.options.prompt}
@@ -131,7 +131,7 @@ const PromptTable = ({
             }
           />
         </div>
-        <div className='flex-auto min-w-0'>
+        <div className='flex-auto min-w-0 min-h-0'>
           <Pagination
             items={promptsInPromptList}
             getItemKey={prompt => prompt.id}

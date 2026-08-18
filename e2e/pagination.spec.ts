@@ -36,7 +36,7 @@ test('hides pagination when every prompt fits on one page', async ({
   ).toHaveCount(0)
 })
 
-test('shows pagination under the last visible prompt when items overflow', async ({
+test('pins pagination to the bottom when items overflow', async ({
   page,
 }) => {
   const texts = Array.from(
@@ -81,12 +81,14 @@ test('shows pagination under the last visible prompt when items overflow', async
     .last()
   const lastBox = await lastVisible.boundingBox()
   const pagerBox = await pager.boundingBox()
+  const viewport = page.viewportSize()
   expect(lastBox).toBeTruthy()
   expect(pagerBox).toBeTruthy()
+  expect(viewport).toBeTruthy()
   expect(pagerBox!.y).toBeGreaterThan(
     lastBox!.y + lastBox!.height
   )
   expect(
-    pagerBox!.y - (lastBox!.y + lastBox!.height)
+    viewport!.height - (pagerBox!.y + pagerBox!.height)
   ).toBeLessThan(80)
 })

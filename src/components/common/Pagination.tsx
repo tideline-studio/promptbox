@@ -7,7 +7,7 @@ import {
 } from 'react'
 import Button from './Button'
 
-const FALLBACK_PAGER_HEIGHT = 56
+const FALLBACK_PAGER_HEIGHT = 72
 
 const Pagination = <T,>({
   items,
@@ -127,7 +127,9 @@ const Pagination = <T,>({
       {showPager ? (
         <Flex
           ref={pagerRef}
+          mt='auto'
           pt={3}
+          pb={4}
           justifyContent='flex-end'
           flexShrink={0}
           role='navigation'

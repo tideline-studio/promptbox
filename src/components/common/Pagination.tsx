@@ -1,6 +1,13 @@
 import { Box, ButtonGroup, Flex } from '@chakra-ui/react'
-import { useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import Button from './Button'
+
+const FALLBACK_PAGER_HEIGHT = 72
 
 const Pagination = <T,>({
   items,
@@ -11,96 +18,146 @@ const Pagination = <T,>({
   renderItem: (item: T) => React.ReactNode
   getItemKey: (item: T) => string | number
 }) => {
-  const parentRef = useRef<HTMLDivElement>(null)
-  const buttonGroupRef = useRef<HTMLDivElement>(null)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [numberOfItemsPerPage, setNumberOfItemsPerPage] =
-    useState(1)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const itemRef = useRef<HTMLDivElement>(null)
+  const pagerRef = useRef<HTMLDivElement>(null)
+  const itemsRef = useRef(items)
+  itemsRef.current = items
 
-  useEffect(() => {
-    if (!parentRef.current) {
+  const [currentPage, setCurrentPage] = useState(0)
+  const [itemsPerPage, setItemsPerPage] = useState(1)
+
+  const recompute = useCallback(() => {
+    const container = containerRef.current
+    const firstItem = itemRef.current
+    if (!container || !firstItem) {
       return
     }
-    let observer = new ResizeObserver(() => {
-      if (!parentRef.current) {
-        return
-      }
-      const firstChild = parentRef.current.children[0]
-      if (!firstChild) {
-        return
-      }
-      const parentHeight = parentRef.current.clientHeight
-      const buttonGroupHeight =
-        buttonGroupRef.current?.clientHeight ?? 0
-      const childHeight = firstChild.clientHeight
-      const numberOfItemsPerPage = Math.floor(
-        (parentHeight - buttonGroupHeight) / childHeight
-      )
-      setNumberOfItemsPerPage(numberOfItemsPerPage)
 
-      const maxNumberOfPages = Math.ceil(
-        items.length / numberOfItemsPerPage
-      )
-      if (maxNumberOfPages - 1 <= currentPage) {
-        setCurrentPage(maxNumberOfPages - 1)
-      }
+    const itemHeight =
+      firstItem.getBoundingClientRect().height
+    if (itemHeight <= 0) {
+      return
+    }
+
+    const availableHeight = container.clientHeight
+    const pagerHeight =
+      pagerRef.current?.getBoundingClientRect().height ||
+      FALLBACK_PAGER_HEIGHT
+    const currentItems = itemsRef.current
+    const fitsWithoutPager = Math.floor(
+      availableHeight / itemHeight
+    )
+
+    // Prefer a pager-free layout when every item fits.
+    // Checking that first avoids oscillating at the fit boundary.
+    const nextItemsPerPage =
+      currentItems.length <= fitsWithoutPager
+        ? Math.max(currentItems.length, 1)
+        : Math.max(
+            1,
+            Math.floor(
+              (availableHeight - pagerHeight) / itemHeight
+            )
+          )
+
+    setItemsPerPage(previous =>
+      previous === nextItemsPerPage
+        ? previous
+        : nextItemsPerPage
+    )
+
+    const pageCount = Math.max(
+      1,
+      Math.ceil(currentItems.length / nextItemsPerPage)
+    )
+    setCurrentPage(previous => {
+      const nextPage = Math.min(previous, pageCount - 1)
+      return nextPage === previous ? previous : nextPage
     })
-    observer.observe(parentRef.current)
-    return () => observer.disconnect()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items])
+  }, [])
 
-  const numberOfPages = Math.ceil(
-    items.length / numberOfItemsPerPage
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) {
+      return
+    }
+
+    const observer = new ResizeObserver(() => {
+      recompute()
+    })
+    observer.observe(container)
+    if (itemRef.current) {
+      observer.observe(itemRef.current)
+    }
+    recompute()
+    return () => observer.disconnect()
+  }, [recompute, items.length])
+
+  const pageCount =
+    items.length === 0
+      ? 0
+      : Math.ceil(items.length / itemsPerPage)
+  const showPager = pageCount > 1
+  const startingIndex = currentPage * itemsPerPage
+  const visibleItems = items.slice(
+    startingIndex,
+    startingIndex + itemsPerPage
   )
-  const startingIndex = currentPage * numberOfItemsPerPage
-  const endingIndex = startingIndex + numberOfItemsPerPage
 
   return (
-    <Flex h='full' direction='column'>
-      <Flex
-        flex='1 0 auto'
-        ref={parentRef}
-        minH={0}
-        overflow='auto'
-        direction='column'
-      >
-        {items
-          .slice(startingIndex, endingIndex)
-          .map(item => (
-            <Box w='100%' key={getItemKey(item)}>
-              {renderItem(item)}
-            </Box>
-          ))}
-      </Flex>
-      <Flex
-        flex='0 1 auto'
-        direction={'row'}
-        justifyContent={'end'}
-      >
-        <ButtonGroup
-          alignItems='center'
-          ref={buttonGroupRef}
-          gap={5}
-        >
-          <Button
-            disabled={currentPage === 0}
-            onClick={() => setCurrentPage(v => v - 1)}
+    <Flex
+      ref={containerRef}
+      h='full'
+      minH={0}
+      direction='column'
+      overflow='hidden'
+    >
+      <Box>
+        {visibleItems.map((item, index) => (
+          <Box
+            w='100%'
+            key={getItemKey(item)}
+            ref={index === 0 ? itemRef : undefined}
           >
-            {'<'}
-          </Button>
-          <Box>
-            {numberOfPages > 0 ? currentPage + 1 : 0} /{' '}
-            {numberOfPages}
+            {renderItem(item)}
           </Box>
-          <Button
-            disabled={currentPage === numberOfPages - 1}
-            onClick={() => setCurrentPage(v => v + 1)}
-          >
-            {'>'}
-          </Button>
-        </ButtonGroup>
-      </Flex>
+        ))}
+      </Box>
+      {showPager ? (
+        <Flex
+          ref={pagerRef}
+          mt='auto'
+          pt={3}
+          pb={4}
+          justifyContent='flex-end'
+          flexShrink={0}
+          role='navigation'
+          aria-label='Pagination'
+        >
+          <ButtonGroup alignItems='center' gap={5}>
+            <Button
+              disabled={currentPage === 0}
+              onClick={() =>
+                setCurrentPage(page => page - 1)
+              }
+            >
+              {'<'}
+            </Button>
+            <Box>
+              {currentPage + 1} / {pageCount}
+            </Box>
+            <Button
+              disabled={currentPage === pageCount - 1}
+              onClick={() =>
+                setCurrentPage(page => page + 1)
+              }
+            >
+              {'>'}
+            </Button>
+          </ButtonGroup>
+        </Flex>
+      ) : null}
     </Flex>
   )
 }
